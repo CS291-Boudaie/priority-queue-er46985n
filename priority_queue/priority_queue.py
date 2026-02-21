@@ -52,11 +52,16 @@ class MinHeap:
     def peek(self):
         # TODO: Return (priority, item) but do NOT remove
         # If empty, return None (or raise an error)
+        if self.is_empty():
+            return None
+        return self.data[0]
         pass
 
     def add(self, priority, item):
         # TODO: Add (priority, item) to end of list
         # Then bubble it UP into correct position
+        self.data.append((priority,item))
+        self._bubble_up(len(self.data) -1)
         pass
 
     def pop_min(self):
@@ -65,6 +70,13 @@ class MinHeap:
         # 1) swap root with last element
         # 2) pop last element (former root)
         # 3) bubble DOWN new root
+        if self.is_empty():
+            return None
+        self.data[0], self.data[-1] = self.data[-1], self.data[0]
+        min_item = self.data.pop()
+        if not self.is_empty():
+            self._bubble_down(0)
+        return min_item
         pass
 
     def _bubble_up(self, idx):
@@ -72,6 +84,13 @@ class MinHeap:
         # Keep swapping this node with its parent while it has a smaller priority.
         # parent index = (idx - 1) // 2
         # Stop when you reach the root OR parent already has <= priority.
+        while idx > 0:
+            parent = (idx -1) //2
+            if self.data[idx][0] < self.data[parent][0]:
+                self.data[idx], self.data[parent] = self.data[parent], self.data[idx]
+                idx = parent
+            else:
+                break
         pass
 
     def _bubble_down(self, idx):
@@ -79,9 +98,22 @@ class MinHeap:
         # left child = 2*idx + 1, right child = 2*idx + 2
         # Find the smaller child, then swap if current priority is bigger.
         # Stop when no children exist OR current is <= both children.
+        size = len(self.data)
+        while True:
+            left = 2 * idx + 1
+            right = 2 * idx + 2
+            smallest = idx
+
+            if left < size and self.data[left][0] < self.data[smallest][0]:
+                smallest = left
+            if right < size and self.data[right][0] < self.data[smallest][0]:   
+                smallest = right
+            if smallest == idx:
+                break
+            self.data[idx], self.data[smallest] = self.data[smallest], self.data[idx]
+            idx = smallest
         pass
-
-
+        
 # Once you have a min heap, the priority queue is pretty straightforward. 
 # Make sure you understand what it is doing
 
